@@ -1,14 +1,14 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Route, Switch } from "react-router";
 
 import Home from "./components/Home";
 import Page1 from "./components/Page1";
 
-const Routes = () => (
-  <div>
+const Routes = (
+  <Switch>
     <Route exact path="/" component={Home} />
     <Route exact path="/page1" component={Page1} />
-  </div>
+  </Switch>
 );
 
 export default Routes;
