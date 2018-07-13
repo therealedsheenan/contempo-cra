@@ -1,39 +1,32 @@
+import { createStore, applyMiddleware, compose } from "redux";
+import { connectRouter, routerMiddleware } from "connected-react-router";
 import createHistory from "history/createBrowserHistory";
-import { routerMiddleware } from "react-router-redux";
-import { applyMiddleware, compose, createStore } from "redux";
 import createSagaMiddleware from "redux-saga";
-import reducers from "./reducers";
-import sagas from "./sagas";
+
+import rootReducer from "./reducers";
 
 export const history = createHistory();
+const sagaMiddleware = createSagaMiddleware();
 
-// const configureStore = () => {
-//   const sagaMiddleware = createSagaMiddleware();
-//   let composeEnhancers = compose;
-//   const middleware = applyMiddleware(sagaMiddleware, routerMiddleware(history));
-//   if (process.env.NODE_ENV !== "production") {
-//     const composeWithDevToolsExtension =
-//       // eslint-disable-next-line
-//       window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
-//     if (typeof composeWithDevToolsExtension === "function") {
-//       composeEnhancers = composeWithDevToolsExtension;
-//     }
-//   }
-//   const store = createStore(reducers, composeEnhancers(middleware));
-//   sagaMiddleware.run(sagas);
-//   // if (module.hot) {
-//   //   module.hot.accept("./reducers", () => {
-//   //     // eslint-disable-next-line
-//   //     store.replaceReducer(require("./reducers").default);
-//   //   });
-//   // }
-//   return store;
-// };
+const initialState = {};
+const enhancers = [];
+const middleware = [sagaMiddleware, routerMiddleware(history)];
 
-// export default configureStore;
+if (process.env.NODE_ENV === "development") {
+  const devToolsExtension = window.__REDUX_DEVTOOLS_EXTENSION__;
 
-const appRouterMiddleware = routerMiddleware(history);
+  if (typeof devToolsExtension === "function") {
+    enhancers.push(devToolsExtension());
+  }
+}
 
-const store = createStore(reducers, applyMiddleware(appRouterMiddleware));
+const composedEnhancers = compose(
+  applyMiddleware(...middleware),
+  ...enhancers
+);
 
-export default store;
+export default createStore(
+  connectRouter(history)(rootReducer),
+  initialState,
+  composedEnhancers
+);
