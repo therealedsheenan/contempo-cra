@@ -1,17 +1,11 @@
 import { combineReducers } from "redux";
 import { routerReducer } from "react-router-redux";
 
-const sampleReducer = (state = {}, action) => {
-  switch (action.type) {
-    case "TEST":
-      return state;
-    default:
-      return state;
-  }
-};
+import sampleReducer from "./modules/sample/reducer";
 
 const reducers = combineReducers({
-  routing: routerReducer
+  routing: routerReducer,
+  sampleReducer
 });
 
 export default reducers;
